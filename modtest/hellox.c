@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define MEMMASK 0x00fff
+#define MEMMASK 0x0fff
 #define word varword
 #define byte varbyte
 
@@ -35,16 +35,18 @@ void execute_test(unsigned char* test, int success_check) {
     unsigned char* mem = i8080_hal_memory();
     int success = 0;
         int i;
- //   memset(mem, 0, 0x10000);
+ 
+    printf("%x memmask %x executable size %x required\n", MEMMASK, sizeof(program), sizeof(program)+0x100);
+    
+        
     for (i=0;i<sizeof(program); i++) {
             mem[i+0x100] = program[i];
     }
-    //memcpy(mem, mem+0x100, program, sizeof(program));
-   // load_file(filename, mem + 0x100);
+    
 
     mem[5] = 0xC9;  // Inject RET at 0x0005 to handle "CALL 5".
     i8080_init();
-    SP = MEMMASK; 
+    SP = MEMMASK; /*stack at last byte of ram*/
     i8080_jump(0x100);
     while (1) {
         int pc = i8080_pc();

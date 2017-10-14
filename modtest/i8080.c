@@ -132,9 +132,45 @@ struct i8080 {
 #define STC()           { SET(C_FLAG); }
 #define CMC()           { CPL(C_FLAG); }
 
-//#define PARITY(reg) parity_table[(reg)]
-//todo:PARITY is wrong
-#define PARITY(reg) 0
+
+
+
+unsigned char PARITY(unsigned char reg){
+        
+ unsigned char par;
+
+ par  = (reg>>4) ^ (reg); //fold 8 to 4 
+
+ //ABCDEFGH
+ //    ABCD
+   
+ 
+ par = (par>>2) ^ par;   //fold 4 to 2
+ 
+ //ABCDEFGH
+ //    ABCD
+ //  ABCDEF
+ //      AB
+ 
+ 
+ 
+ par = (par>>1) ^ par;  //fold 2 to 1
+ 
+ //ABCDEFGH
+ //    ABCD
+ //  ABCDEF
+ //      AB
+ // ABCDEFG
+ //     ABC
+ //   ABCDE
+ //       A
+ 
+  
+ //select rightmost bit and flip
+  
+ return (par ^ 1) & 1; 
+ 
+}
 
 
 int half_carry_table[] = { 0, 0, 1, 0, 1, 0, 1, 1 };
@@ -288,25 +324,37 @@ void ORA(uns16 val)
     CLR(C_FLAG);                                
 }
 
-//TODO: DAD is wrong
-void DAD(int reg){
-
-	unsigned int a = reg + D;
-	if (a>0xffff)
-		C_FLAG = 1;
-
-	D = a& 0xFFFF;
 
 
+void DAD( uns16 reg)
+{   
+        
+    //do bottom 8 bit add
+    work16 = L + (reg & 0xFF);
+    
+    work8 = work16 & 0xff;  //take bottom 8 bits
+    work16 = work16 >>8;  //shift right any carry left over
+    
+    work16 += H;  //add in H
+    work16 += (reg>>8); //add in top part of reg
+        
+    
+    //set carry if top byte exceeded 8 bits
+    if (work16 > 0xff)
+        C_FLAG = 1; 
+    else  
+        C_FLAG = 0;
+    
+    //bottom of work16 has H byte
+    H = work16 & 0xff;
+    
+    //work8 has the saved L byte
+    L = work8;
+    
+        
+    
 }
-/*
-#define DAD(reg) \
-{                                               \
-    work16 = (uns16)HL + (reg);                 \
-    HL = work16 & 0xffff;                       \
-    C_FLAG = ((work16 & 0x1000L) != 0);        \
-}
-*/
+
 
 #define CALL \
 {             	\
@@ -320,26 +368,8 @@ void RST(uns16 addr)
     PC = (addr);                                
 }
 
-/*
-int parity_table[] = {
-    1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1,
-    0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0,
-    0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0,
-    1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1,
-    0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0,
-    1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1,
-    1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1,
-    0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0,
-    0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0,
-    1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1,
-    1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1,
-    0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0,
-    1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1,
-    0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0,
-    0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0,
-    1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1,
-};
-*/
+
+
 void i8080_init(void) {
     C_FLAG = 0;
     S_FLAG = 0;

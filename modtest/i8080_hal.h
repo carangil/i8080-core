@@ -50,4 +50,8 @@ void i8080_hal_iff(int on);
 
 extern unsigned char* i8080_hal_memory(void);
 
+#ifndef MEMMASK
+#define MEMMASK 0xFFFF
+#endif
+
 #endif
