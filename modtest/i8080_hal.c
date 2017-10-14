@@ -47,12 +47,12 @@ void i8080_hal_memory_write_word(unsigned int addr, unsigned int word) {
 }
 
 unsigned int i8080_hal_memory_read_byte(unsigned int addr) {
-	printf(" R%x:%x\n", addr,memory[ ((unsigned int)addr) & MEMMASK] );
+	//printf(" R%x:%x\n", addr,memory[ ((unsigned int)addr) & MEMMASK] );
     return memory[ ((unsigned int)addr) & MEMMASK];
 }
 
 void i8080_hal_memory_write_byte(unsigned addr, unsigned int byte) {
-	printf(" W%x=%x\n", addr, byte);
+//	printf(" W%x=%x\n", addr, byte);
     memory[((unsigned int)addr) &MEMMASK ] = byte;
 }
 

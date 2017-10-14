@@ -3,7 +3,7 @@
 #define MEMMASK 0x07ff
 #define word varword
 #define byte varbyte
-
+#define BIGENDIAN
 
 #include "prog8080.c"
 #include "i8080.h"

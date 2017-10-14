@@ -49,7 +49,16 @@ typedef signed short            sgn16;
 
 typedef union {
     struct {
+
+
+/* BAD ASSUMPTION:  l before h only applies to variables on little endian machines! */
+
+#ifdef BIGENDIAN
+	uns8 h, l;
+#else
         uns8 l, h;
+#endif
+
     } b;
     uns16 w;
 } reg_pair;
@@ -238,7 +247,6 @@ void SBB(uns16 val)
 
 void CMP(uns16 val)
 {    
-    printf(" CMP %x\n", val);	
     work16 = (uns16)A - (val);                   
     varindex = ((A & 0x88) >> 1) |                  
             (((val) & 0x88) >> 2) |              
@@ -282,6 +290,14 @@ void ORA(uns16 val)
 
 //TODO: DAD is wrong
 void DAD(int reg){
+
+	unsigned int a = reg + D;
+	if (a>0xffff)
+		C_FLAG = 1;
+
+	D = a& 0xFFFF;
+
+
 }
 /*
 #define DAD(reg) \
@@ -296,7 +312,6 @@ void DAD(int reg){
 {             	\
     PUSH(PC + 2);                               \
     PC = RD_WORD(PC);                           \
-    printf(" call new pc %x\n", PC);\
 }
 
 void RST(uns16 addr)
@@ -335,7 +350,14 @@ void i8080_init(void) {
     UN3_FLAG = 0;
     UN5_FLAG = 0;
 
+    AF=0;
+    BC=0;
+    DE=0;
+    HL=0;
+
+
     PC = 0xF800;
+    
 }
 
 static int i8080_execute(int opcode) {
@@ -1726,8 +1748,18 @@ static int i8080_execute(int opcode) {
 
 int step=0;
 int i8080_instruction(void) {
-    printf("step%x  PC %x A=%x", step, PC, A);
-    readline();
+    unsigned int check = (PC+A+F+BC+DE+HL+SP)& 0xFFFF;
+
+    /*
+    printf("step%d CHECK:%04x  PC%04x A=%02x F=%02x BC=%04x DE=%04x HL=%04x SP=%04x H=%d L=%d\n", 
+		    step,
+		    check ,
+		    (unsigned int)PC,(unsigned int)A, (unsigned int) F,(unsigned int)BC,(unsigned int)DE,(unsigned int)HL,(unsigned int)SP, (unsigned int) H, (unsigned int) L);
+
+		    */
+    
+//	if (step>80)    
+//	    readline();
 	step++;
     return i8080_execute(RD_BYTE(PC++));
 }

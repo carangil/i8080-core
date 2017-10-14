@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define MEMMASK 0x07ff
+#define MEMMASK 0x00fff
 #define word varword
 #define byte varbyte
 
