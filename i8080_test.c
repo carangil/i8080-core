@@ -92,9 +92,9 @@ void execute_test(const char* filename, int success_check) {
 }
 
 int main() {
-    execute_test("CPUTEST.COM", 0);
-    execute_test("TEST.COM", 0);
-    execute_test("8080PRE.COM", 1);
-    execute_test("8080EX1.COM", 0);
+    execute_test("tests/CPUTEST.COM", 0);
+    execute_test("tests/TEST.COM", 0);
+    execute_test("tests/8080PRE.COM", 1);
+    execute_test("tests/8080EX1.COM", 0);
     return 0;
 }
