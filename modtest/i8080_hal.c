@@ -33,7 +33,7 @@
 
 #include "i8080_hal.h"
 
-unsigned char memory[MEMSIZE];
+//unsigned char memory[MEMSIZE];
 
 unsigned int i8080_hal_memory_read_word(unsigned int addr) {
     return 

@@ -2,7 +2,9 @@
 #include <stdlib.h>
 
 #define MEMMASK 0x1fff
-#define MEMSIZE 0x1500
+//#define MEMSIZE 0x1500
+//#define MEMSIZE 0x1500
+#define MEMSIZE sizeof(memory)
 
 #define word varword
 #define byte varbyte
@@ -43,9 +45,10 @@ void execute_test(unsigned char* test, int success_check) {
         
     
         
-    for (i=0;i<sizeof(program); i++) {
-            mem[i+0x100] = program[i];
-    }
+   // for (i=0;i<sizeof(program); i++) {
+   //         mem[i+0x100] = program[i];
+   // }
+    
     
 
     mem[5] = 0xC9;  // Inject RET at 0x0005 to handle "CALL 5".
@@ -71,6 +74,7 @@ void execute_test(unsigned char* test, int success_check) {
                 for (i = i8080_regs_de(); mem[i] != '$'; i += 1)
                     putchar(mem[i]);
                 success = 1;
+                printf("\n");
             }
             if (i8080_regs_c() == 2) putchar((char)i8080_regs_e());
         }
@@ -89,7 +93,7 @@ int main(){
 	unsigned char x;
 
         printf("Start!\n");
-        execute_test(program, 0);
+        execute_test(memory, 0);
 	printf("Done!\n");
 	
 
