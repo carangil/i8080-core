@@ -1,6 +1,7 @@
 #include <coco.h>
 
-#define MEMMASK 0x07ff
+#define MEMMASK 0x1fff
+#define MEMSIZE 0x1380
 #define word varword
 #define byte varbyte
 #define BIGENDIAN
@@ -34,7 +35,14 @@ void execute_test(unsigned char* test, int success_check) {
     int success = 0;
         int i;
  //   memset(mem, 0, 0x10000);
+        printf ("%x to %x is prog array\n", program, program+sizeof(program));
+        printf ("%x to %x is mem array\n", mem, mem+sizeof(memory));
+        
 	printf("phase 1 %x %x \n", sizeof(program), sizeof(memory));
+    for (i=0;i<MEMSIZE;i++)
+            mem[i] = 0x1;
+    
+    	printf("phase 1.5 %x %x \n", sizeof(program), sizeof(memory));
     for (i=0;i<sizeof(program); i++) {
 //	    printf("%x\n", i);
             mem[i+0x100] = program[i];
@@ -44,7 +52,7 @@ void execute_test(unsigned char* test, int success_check) {
 	printf(" phase 2\n");
     mem[5] = 0xC9;  // Inject RET at 0x0005 to handle "CALL 5".
     i8080_init();
-    SP = MEMMASK; 
+    SP = MEMSIZE-1; 
     i8080_jump(0x100);
     while (1) {
         int pc = i8080_pc();
