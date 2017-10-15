@@ -2,6 +2,8 @@
 #include <stdlib.h>
 
 #define MEMMASK 0x1fff
+#define MEMSIZE 0x1500
+
 #define word varword
 #define byte varbyte
 
@@ -36,7 +38,9 @@ void execute_test(unsigned char* test, int success_check) {
     int success = 0;
         int i;
  
-    printf("%x memmask %x executable size %x required\n", MEMMASK, sizeof(program), sizeof(program)+0x100);
+    
+    printf(" memmask:%x  memsize: %x \n", MEMMASK, MEMSIZE);
+        
     
         
     for (i=0;i<sizeof(program); i++) {
@@ -46,7 +50,14 @@ void execute_test(unsigned char* test, int success_check) {
 
     mem[5] = 0xC9;  // Inject RET at 0x0005 to handle "CALL 5".
     i8080_init();
-    SP = MEMMASK; /*stack at last byte of ram*/
+    
+    //set up pointer to last byte of ram (FOR LHLD 6, which programs use to find end of memory)
+    
+    mem[6] = MEMSIZE & 0xFF ;  
+    mem[7] = (MEMSIZE >> 8);
+    SP = MEMSIZE; /*stack at last byte of ram*/
+    
+    
     i8080_jump(0x100);
     while (1) {
         int pc = i8080_pc();

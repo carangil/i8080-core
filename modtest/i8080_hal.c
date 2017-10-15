@@ -33,7 +33,7 @@
 
 #include "i8080_hal.h"
 
-unsigned char memory[MEMMASK+1];
+unsigned char memory[MEMSIZE];
 
 unsigned int i8080_hal_memory_read_word(unsigned int addr) {
     return 
@@ -48,11 +48,18 @@ void i8080_hal_memory_write_word(unsigned int addr, unsigned int word) {
 
 unsigned int i8080_hal_memory_read_byte(unsigned int addr) {
 	//printf(" R%x:%x\n", addr,memory[ ((unsigned int)addr) & MEMMASK] );
+  //  if (addr >= MEMSIZE)
+    //            printf("ILLEGAL READ FROM %x\n", addr);
+    
     return memory[ ((unsigned int)addr) & MEMMASK];
 }
 
 void i8080_hal_memory_write_byte(unsigned addr, unsigned int byte) {
 //	printf(" W%x=%x\n", addr, byte);
+        
+     //   if (addr >= MEMSIZE)
+       //         printf("ILLEGAL WRITE TO %x\n", addr);
+        
     memory[((unsigned int)addr) &MEMMASK ] = byte;
 }
 

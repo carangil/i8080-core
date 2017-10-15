@@ -54,4 +54,8 @@ extern unsigned char* i8080_hal_memory(void);
 #define MEMMASK 0xFFFF
 #endif
 
+#ifndef MEMSIZE
+#define MEMSIZE MEMMASK+1
+#endif
+
 #endif
