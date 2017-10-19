@@ -64,7 +64,7 @@ int main(int argc, char** argv)
                                 }
                         }
                         
-                        if ( (total) && (pos >total) ) {
+                        if ( (total) && (pos >=total) ) {
                          
                                 if (!feof(in))
                                         printf(" Warning: input file longer than requested memory image\n");
