@@ -392,6 +392,7 @@ void i8080_init(void) {
 
 static int i8080_execute(int opcode) {
 //    int //cpu_cycles;
+      //  printf(" %x : %x\n", PC,opcode);
     switch (opcode) {
         case 0x00:            /* nop */
         // Undocumented NOP.
@@ -1534,6 +1535,10 @@ static int i8080_execute(int opcode) {
 
         case 0xDB:            /* in port8 */
             //cpu_cycles = 10;
+              //  if (RD_BYTE(PC++) == 1)
+                //        A=inkey();
+              //  A=13;
+            //    PC++;
             A = i8080_hal_io_input(RD_BYTE(PC++));
             break;
 
@@ -1778,19 +1783,23 @@ static int i8080_execute(int opcode) {
 
 int step=0;
 int i8080_instruction(void) {
+        /*
     unsigned int check = (PC+A+F+BC+DE+HL+SP)& 0xFFFF;
 
-    /*
+    
     printf("step%d CHECK:%04x  PC%04x A=%02x F=%02x BC=%04x DE=%04x HL=%04x SP=%04x H=%d L=%d\n", 
 		    step,
 		    check ,
 		    (unsigned int)PC,(unsigned int)A, (unsigned int) F,(unsigned int)BC,(unsigned int)DE,(unsigned int)HL,(unsigned int)SP, (unsigned int) H, (unsigned int) L);
 
-		    */
+		    
     
+    
+        
 //	if (step>80)    
 //	    readline();
 	step++;
+        */
     return i8080_execute(RD_BYTE(PC++));
 }
 

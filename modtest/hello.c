@@ -12,7 +12,7 @@
 #include "i8080_hal.c"
 #include "i8080.c"
 
-
+//#define START0100
 
 void f1(){
 	printf("Func1\n");
@@ -36,7 +36,7 @@ void execute_test(unsigned char* test, int success_check) {
         int i;
  //   memset(mem, 0, 0x10000);
     //    printf ("%x to %x is prog array\n", program, program+sizeof(program));
-        printf ("%x to %x is mem array\n", mem, mem+sizeof(memory));
+        printf ("MEM:$%x to $%x = %d bytes\n", mem, mem+sizeof(memory), sizeof(memory));
         
 //	printf("phase 1 %x %x \n", sizeof(program), sizeof(memory));
   //  for (i=0;i<MEMSIZE;i++)
@@ -51,23 +51,35 @@ void execute_test(unsigned char* test, int success_check) {
         
     //memcpy(mem, mem+0x100, program, sizeof(program));
    // load_file(filename, mem + 0x100);
-	printf(" phase 2\n");
-    mem[5] = 0xC9;  // Inject RET at 0x0005 to handle "CALL 5".
+	printf("8080 init \n");
+
+        i8080_init();
     
-       
+#ifdef START0100
+    mem[5] = 0xC9;  // Inject RET at 0x0005 to handle "CALL 5".
     mem[6] = MEMSIZE & 0xFF ;  
     mem[7] = (MEMSIZE >> 8);
-    SP = MEMSIZE; /*stack at last byte of ram*/
-    
-    i8080_init();
-    SP = MEMSIZE-1; 
     i8080_jump(0x100);
+#else
+    i8080_jump(0x0000);
+#endif
+    
+    printf("boot\n");
+    
+    SP = MEMSIZE; /*stack at last byte of ram*/
+       
+    
+    
     while (1) {
         int pc = i8080_pc();
+        /*
         if (mem[pc] == 0x76) {
             printf("HLT at %04X\n", pc);
             exit(1);
         }
+        */
+        
+#ifdef START0100
         if (pc == 0x0005) {
             if (i8080_regs_c() == 9) {
                 int i;
@@ -77,13 +89,20 @@ void execute_test(unsigned char* test, int success_check) {
             }
             if (i8080_regs_c() == 2) putchar((char)i8080_regs_e());
         }
+#endif
+
         i8080_instruction();
+        
+#ifdef START0100
+        
         if (i8080_pc() == 0) {
             printf("\nJump to 0000 from %04X\n", pc);
             if (success_check && !success)
                 exit(1);
             return;
         }
+#endif
+
     }
 }
 

@@ -45,11 +45,15 @@ void i8080_hal_memory_write_word(unsigned int addr, unsigned int word) {
     i8080_hal_memory_write_byte(addr, word & 0xff);
     i8080_hal_memory_write_byte(addr + 1, (word >> 8) & 0xff);
 }
+ int i8080_pc();
 
 unsigned int i8080_hal_memory_read_byte(unsigned int addr) {
 	//printf(" R%x:%x\n", addr,memory[ ((unsigned int)addr) & MEMMASK] );
-  //  if (addr >= MEMSIZE)
-    //            printf("ILLEGAL READ FROM %x\n", addr);
+    if (addr >= MEMSIZE) {
+                printf("ILLEGAL READ FROM %x PC=%x\n", addr, i8080_pc());
+                while(1);
+                return 0;
+    }
     
     return memory[ ((unsigned int)addr) & MEMMASK];
 }
@@ -57,17 +61,34 @@ unsigned int i8080_hal_memory_read_byte(unsigned int addr) {
 void i8080_hal_memory_write_byte(unsigned addr, unsigned int byte) {
 //	printf(" W%x=%x\n", addr, byte);
         
-     //   if (addr >= MEMSIZE)
-       //         printf("ILLEGAL WRITE TO %x\n", addr);
+        if (addr >= MEMSIZE)
+                printf("ILLEGAL WRITE TO %x\n", addr);
         
     memory[((unsigned int)addr) &MEMMASK ] = byte;
 }
 
 int i8080_hal_io_input(int port) {
+   if (port==1)
+       return inkey();
+   
+        
+    
+   // printf(" read port 1 %d\n", port);       
+            
+  
+        
     return 0;
+    
+    
+    
 }
 
 void i8080_hal_io_output(int port, int value) {
+      //  printf(" port %d byte %x  %c\n", port, value, value&0x7f);
+        
+        printf("%c", value&0x7f);
+        
+        
     // Nothing.
 }
 
