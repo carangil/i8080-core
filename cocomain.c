@@ -14,20 +14,6 @@
 
 //#define START0100
 
-void f1(){
-	printf("Func1\n");
-}
-
-void f2(){
-	printf("Func2\n");
-}
-
-
-void f3(){
-	printf("Func3\n");
-}
-
-void* fs[3]={f1,f2,f3};
 
 
 void execute_test(unsigned char* test, int success_check) {
@@ -56,6 +42,7 @@ void execute_test(unsigned char* test, int success_check) {
         i8080_init();
     
 #ifdef START0100
+    printf("Start at 0x100\n");
     mem[5] = 0xC9;  // Inject RET at 0x0005 to handle "CALL 5".
     mem[6] = MEMSIZE & 0xFF ;  
     mem[7] = (MEMSIZE >> 8);

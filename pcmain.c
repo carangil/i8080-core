@@ -10,6 +10,12 @@
 #define word varword
 #define byte varbyte
 
+
+char inkey()
+{
+	return 0; 
+}
+
 #include "prog8080.c"
 #include "i8080.h"
 #include "i8080_hal.h"
@@ -18,25 +24,6 @@
 
 
 //#define START0100
-
-
-void readline(){
-}
-
-void f1(){
-	printf("Func1\n");
-}
-
-void f2(){
-	printf("Func2\n");
-}
-
-
-void f3(){
-	printf("Func3\n");
-}
-
-void* fs[3]={f1,f2,f3};
 
 
 void execute_test(unsigned char* test, int success_check) {
@@ -119,6 +106,5 @@ int main(){
         execute_test(memory, 0);
 	printf("Done!\n");
 	
-
 	return 0;
 }
