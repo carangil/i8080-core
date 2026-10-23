@@ -25,6 +25,7 @@ char inkey()
 
 //#define START0100
 
+int track_pc = 0; //set to 1 to print each PC
 
 void execute_test(unsigned char* test, int success_check) {
     unsigned char* mem = i8080_hal_memory();
@@ -65,6 +66,22 @@ void execute_test(unsigned char* test, int success_check) {
     
     while (1) {
         int pc = i8080_pc();
+
+        if (track_pc){
+            fprintf(stderr, "%04x\t", pc);
+
+
+            fprintf(stderr, "a:%02x b:%02x c:%02x d:%02x e:%02x h:%02x l:%02x sp:%02x flags:%d%d%d%d%d",
+                    A,B,C,D,E,H,L,SP,
+                    C_FLAG,P_FLAG,H_FLAG,Z_FLAG,S_FLAG);
+
+            fprintf(stderr, "\n");
+
+
+
+
+        }
+
         if (mem[pc] == 0x76) {
             printf("HLT at %04X\n", pc);
             exit(1);
@@ -83,7 +100,7 @@ void execute_test(unsigned char* test, int success_check) {
             if (i8080_regs_c() == 2) putchar((char)i8080_regs_e());
         }
 #endif
-       
+    
         
         i8080_instruction();
         
@@ -99,11 +116,15 @@ void execute_test(unsigned char* test, int success_check) {
 }
 
 
-int main(){
+int main(int argc, char** args){
 	unsigned char x;
 
-        printf("Start!\n");
-        execute_test(memory, 0);
+    if (argc == 2){
+        track_pc = 1;
+    }
+
+    printf("Start!\n");
+    execute_test(memory, 0);
 	printf("Done!\n");
 	
 	return 0;
