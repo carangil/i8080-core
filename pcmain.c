@@ -26,6 +26,7 @@ char inkey()
 //#define START0100
 
 int track_pc = 0; //set to 1 to print each PC
+int use_instruction[256]={0};
 
 void execute_test(unsigned char* test, int success_check) {
     unsigned char* mem = i8080_hal_memory();
@@ -38,7 +39,7 @@ void execute_test(unsigned char* test, int success_check) {
     
         
    // for (i=0;i<sizeof(program); i++) {
-   //         mem[i+0x100] = program[i];
+   //         mem[i+0x100] = program[i]; int use_instruction[256]={0};
    // }
     
     
@@ -62,7 +63,7 @@ void execute_test(unsigned char* test, int success_check) {
     
     SP = MEMSIZE; /*stack at last byte of ram*/
     
-    
+
     
     while (1) {
         int pc = i8080_pc();
@@ -101,7 +102,7 @@ void execute_test(unsigned char* test, int success_check) {
         }
 #endif
     
-        
+        use_instruction[  mem[pc] ] ++;
         i8080_instruction();
         
         #ifdef START0100
@@ -127,5 +128,13 @@ int main(int argc, char** args){
     execute_test(memory, 0);
 	printf("Done!\n");
 	
+    if (track_pc){
+        fprintf(stderr, "Instructions used:\n");
+        for (int i=0;i<256;i++){
+            if (use_instruction[i])
+                fprintf(stderr, "%02x\n",  i);
+        }
+    }
+
 	return 0;
 }
